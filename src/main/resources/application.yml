@@ -1,0 +1,10 @@
+server:
+  port: 8989
+  
+spring:  
+  application:
+    name: address-service
+ 
+  cloud:    config:      uri: http://http://localhost:8888 
+
+   
