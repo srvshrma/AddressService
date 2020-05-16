@@ -9,6 +9,7 @@ import com.cognizant.addressService.model.Address;
 @Repository
 public interface AddressRepository extends CrudRepository<Address, Integer>{
 
-	List<Address> findByPermanentAddress(String permanentAddress);
-	List<Address> findByCurrentAddress(String currentAddress);
+	List<Address> findByStreetName(String name);
+	List<Address> findByCity(String name);
+	List<Address> findByCountry(String name);
 }

@@ -2,45 +2,78 @@ package com.cognizant.addressService.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.cognizant.addressService.config.AsyncResponse;
 import com.cognizant.addressService.model.Address;
 import com.cognizant.addressService.repository.AddressRepository;
 @Service
 public class AddServiceImpl implements AddService {
 	@Autowired
 	AddressRepository aRepo; 
-
-	@Override
-	public Optional<Address> getAddressById(int id) {
-		
-		return aRepo.findById(id);
+	
+	Logger logger = LoggerFactory.getLogger(AddService.class); 
+	@Async
+	public CompletableFuture<Iterable<Address>> findAllAdd(){
+	
+		logger.info("Get list of address by "+Thread.currentThread().getName());
+			Iterable<Address> adds=aRepo.findAll();
+			return CompletableFuture.completedFuture(adds);
+			
 	}
-
+	@Async
 	@Override
-	public Address createAddress(Address address) {
-		// TODO Auto-generated method stub
-		return aRepo.save(address);
+	public CompletableFuture<Optional<Address>> getAddressById(int id) {
+		logger.info("get id of address by "+Thread.currentThread().getName());
+		Optional<Address> adds=aRepo.findById(id);
+		return CompletableFuture.completedFuture(adds);
 	}
-
+	@Async
 	@Override
-	public Iterable<Address> getAllAddress() {
+	public CompletableFuture<Address> createAddress(Address address) {
 		// TODO Auto-generated method stub
-		return aRepo.findAll();
+		logger.info("Create address by "+Thread.currentThread().getName());
+		/*AsyncResponse<Address> response=new AsyncResponse<Address>();
+		try {
+			Address create=aRepo.save(address);
+			return CompletableFuture.completedFuture(create);
+		} catch (Exception e) {
+			logger.warn("Exception caught while finding address.",e);
+			response.completeExceptionally(e);
+		}
+		return response;*/
+		Address create=aRepo.save(address);
+		return CompletableFuture.completedFuture(create);
 	}
-
+	@Async
 	@Override
-	public List<Address> getByPermAdd(String permanentAddress) {
+	public CompletableFuture<List<Address>> getByCity(String name) {
 		// TODO Auto-generated method stub
-		return aRepo.findByPermanentAddress(permanentAddress);
+		logger.info("get address by city by "+Thread.currentThread().getName());
+		List<Address> byCity=aRepo.findByCity(name);
+		return CompletableFuture.completedFuture(byCity);
+				
 	}
-
+	@Async
 	@Override
-	public List<Address> getByCurrAdd(String currentAddress) {
+	public CompletableFuture<List<Address>> getByCountry(String name) {
 		// TODO Auto-generated method stub
-		return aRepo.findByCurrentAddress(currentAddress);
+		logger.info("get address by country by "+Thread.currentThread().getName());
+		List<Address> byCoun=aRepo.findByCountry(name);
+		return CompletableFuture.completedFuture(byCoun);
+	}
+	@Async
+	@Override
+	public CompletableFuture<List<Address>> getByStreetName(String name) {
+		logger.info("get address by street by "+Thread.currentThread().getName());
+		List<Address> byStreet=aRepo.findByStreetName(name);
+		return CompletableFuture.completedFuture(byStreet);
 	}
 
 	@Override
